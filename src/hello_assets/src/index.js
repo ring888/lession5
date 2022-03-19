@@ -1,19 +1,47 @@
 import { hello } from "../../declarations/hello";
 
-document.querySelector("form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const button = e.target.querySelector("button");
+async function post(){
 
-  const name = document.getElementById("name").value.toString();
+  let post_button = document.getElementById("post");
+  let error = document.getElementById("error");
+  error.innerText = "";
+  post_button.disabled = true;
+  let textarea = document.getElementById("message");
+  let opt = document.getElementById("opt").value;
+  let text = textarea.value;
+  try {
+    await hello.post(opt,text);
+    textarea.value = "";
+  } catch (error) {
+    console.log(err);
+    error.innerText = "Post Failed!";
+    
+  }
+ 
+  post_button.disabled = false;
+}
 
-  button.setAttribute("disabled", true);
+var num_posts = 0;
+async function load_posts(){
+  let posts_section = document.getElementById("posts");
 
-  // Interact with foo actor, calling the greet method
-  const greeting = await hello.greet(name);
+  let posts = await hello.posts();
+  if(num_posts == posts.length) return;
+  posts_section.replaceChildren([]);
+  num_posts = posts.length;
+  for(var i=0;i<posts.length;i++)
+  {
+    let post = document.createElement("posts");
+    post.innerText = posts[i];
+    posts_section.appendChild(post)
+  }
+}
 
-  button.removeAttribute("disabled");
+function load(){
+  let post_button = document.getElementById();
+  
+  post_button.onclick = post;
+  load_posts()
+}
 
-  document.getElementById("greeting").innerText = greeting;
-
-  return false;
-});
+window.onload = load
